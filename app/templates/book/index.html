@@ -1,0 +1,18 @@
+<h1>Book一覧</h1>
+
+<table border="1">
+    <tr>
+        <th>タイトル</th>
+        <th>内容</th>
+    </tr>
+    {{ range .books }}
+        <tr>
+            <td>{{ .Title }}</td>
+            <td>{{ .Content }}</td>
+        </tr>
+    {{ end }}
+</table>
+
+<div>
+    <a href="/book/create">作成</a>
+</div>
