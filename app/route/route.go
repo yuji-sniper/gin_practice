@@ -2,18 +2,22 @@ package route
 
 import (
 	"app/main/controller"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
+var router *gin.Engine
+
 func Init() {
-	router := router()
+	router = gin.Default()
+	setCors()
+	route()
 	router.Run(":8000")
 }
 
-func router() *gin.Engine {
-	router := gin.Default()
-
+func route() {
 	book := router.Group("/book")
 	{
 		router.LoadHTMLGlob("templates/book/*.html")
@@ -24,6 +28,28 @@ func router() *gin.Engine {
 		book.POST("/update/:id", controller.BookUpdate)
 		book.POST("/delete/:id", controller.BookDelete)
 	}
+}
 
-	return router
+func setCors() {
+	router.Use(cors.New(cors.Config{
+		AllowMethods: []string{
+            "POST",
+            "GET",
+            "OPTIONS",
+            "PUT",
+            "DELETE",
+        },
+		AllowHeaders: []string{
+            "Access-Control-Allow-Headers",
+            "Content-Type",
+            "Content-Length",
+            "Accept-Encoding",
+            "X-CSRF-Token",
+            "Authorization",
+        },
+		AllowOrigins: []string{
+            "http://localhost:8000/",
+        },
+		MaxAge: 24 * time.Hour,
+	}))
 }
