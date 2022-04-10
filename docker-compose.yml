@@ -16,6 +16,7 @@ services:
       - ./app:/app
     depends_on:
       - db
+      - redis
   db:
     build:
       context: .
@@ -35,6 +36,12 @@ services:
       - ./docker/mysql/conf.d:/etc/mysql/conf.d
     ports:
       - 3306:3306
+  redis:
+    image: redis:latest
+    container_name: gin_redis
+    tty: true
+    ports:
+      - 6379:6379
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: gin_phpmyadmin

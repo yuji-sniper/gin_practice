@@ -2,6 +2,7 @@ package controller
 
 import (
 	"app/main/model"
+	"app/main/module"
 	"app/main/repository"
 	"net/http"
 	"strconv"
@@ -11,15 +12,23 @@ import (
 
 var bookRepository repository.BookRepository
 
+var sessionModule module.SessionModule
+
 func init() {
 	bookRepository = repository.BookRepository{}
+
+	sessionModule = module.SessionModule{}
 }
 
 // Book一覧
 func BookIndex(ctx *gin.Context) {
 	books := bookRepository.FetchBooks()
+
+	flashMessage := sessionModule.GetFlashMessage(ctx)
+
 	ctx.HTML(http.StatusOK, "index.html", gin.H{
 		"books": books,
+		"flashMessage": flashMessage,
 	})
 }
 
@@ -37,6 +46,8 @@ func BookStore(ctx *gin.Context) {
 	}
 
 	bookRepository.CreateBook(&book)
+
+	sessionModule.SetFlashMessage(ctx, "作成しました!")
 
 	ctx.Redirect(http.StatusFound, "/book")
 }
@@ -68,6 +79,8 @@ func BookUpdate(ctx *gin.Context) {
 	}
 	bookRepository.UpdateBook(id, &book)
 
+	sessionModule.SetFlashMessage(ctx, "更新しました!")
+
 	ctx.Redirect(http.StatusFound, "/book")
 }
 
@@ -79,6 +92,8 @@ func BookDelete(ctx *gin.Context) {
 		return
 	}
 	bookRepository.DeleteBook(id)
+
+	sessionModule.SetFlashMessage(ctx, "削除しました!")
 
 	ctx.Redirect(http.StatusFound, "/book")
 }
