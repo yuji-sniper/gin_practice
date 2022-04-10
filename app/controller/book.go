@@ -70,3 +70,15 @@ func BookUpdate(ctx *gin.Context) {
 
 	ctx.Redirect(http.StatusFound, "/book")
 }
+
+// Book削除
+func BookDelete(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "idが数字ではありません!")
+		return
+	}
+	bookRepository.DeleteBook(id)
+
+	ctx.Redirect(http.StatusFound, "/book")
+}

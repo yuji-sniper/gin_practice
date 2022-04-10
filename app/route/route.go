@@ -22,6 +22,7 @@ func router() *gin.Engine {
 		book.POST("/store", controller.BookStore)
 		book.GET("/edit/:id", controller.BookEdit)
 		book.POST("/update/:id", controller.BookUpdate)
+		book.POST("/delete/:id", controller.BookDelete)
 	}
 
 	return router

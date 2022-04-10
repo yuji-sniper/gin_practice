@@ -4,7 +4,7 @@
     <tr>
         <th>タイトル</th>
         <th>内容</th>
-        <th>操作</th>
+        <th colspan="2">操作</th>
     </tr>
     {{ range .books }}
         <tr>
@@ -12,6 +12,11 @@
             <td>{{ .Content }}</td>
             <td>
                 <a href="/book/edit/{{ .Id }}">編集</a>
+            </td>
+            <td>
+                <form method="POST" action="/book/delete/{{ .Id }}">
+                    <input type="submit" value="削除">
+                </form>
             </td>
         </tr>
     {{ end }}
