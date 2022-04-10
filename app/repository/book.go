@@ -16,4 +16,13 @@ func (BookRepository) CreateBook(book *model.Book) {
 	db.Create(&book)
 }
 
+func (BookRepository) FindBook(id int) model.Book {
+	book := model.Book{Id: id}
+	db.First(&book)
+	return book
+}
 
+func (BookRepository) UpdateBook(id int, book *model.Book) {
+	book.Id = id
+	db.Save(&book)
+}

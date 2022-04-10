@@ -1,0 +1,22 @@
+<h1>Book編集</h1>
+<a href="/book">一覧</a>
+
+<form method="POST" action="/book/update/{{ .book.Id }}">
+    <p>
+        <div>タイトル:</div>
+        <div>
+            <input type="text" name="title" value="{{ .book.Title }}">
+        </div>
+    </p>
+    <p>
+        <div>内容：</div>
+        <div>
+            <textarea name="content">{{ .book.Content }}</textarea>
+        </div>
+    </p>
+    <p>
+        <div>
+            <input type="submit" value="更新">
+        </div>
+    </p>
+</form>

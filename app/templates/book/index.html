@@ -4,11 +4,15 @@
     <tr>
         <th>タイトル</th>
         <th>内容</th>
+        <th>操作</th>
     </tr>
     {{ range .books }}
         <tr>
             <td>{{ .Title }}</td>
             <td>{{ .Content }}</td>
+            <td>
+                <a href="/book/edit/{{ .Id }}">編集</a>
+            </td>
         </tr>
     {{ end }}
 </table>
