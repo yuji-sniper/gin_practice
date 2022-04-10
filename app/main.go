@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
@@ -12,6 +13,14 @@ import (
 func main() {
 	db := DBConnect()
 	defer db.Close()
+
+	router := gin.Default()
+	router.LoadHTMLGlob("templates/*.html")
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(200, "index.html", gin.H{})
+	})
+
+	router.Run(":8000")
 }
 
 func DBConnect() *gorm.DB {

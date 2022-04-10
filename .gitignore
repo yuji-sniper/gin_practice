@@ -3,3 +3,5 @@
 docker/mysql/data
 
 phpmyadmin
+
+app/tmp
