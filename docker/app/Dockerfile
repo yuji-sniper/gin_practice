@@ -1,10 +1,9 @@
 FROM golang:latest
 
-RUN mkdir /app
 WORKDIR /app
 
-RUN go mod init app/main
+RUN go mod init app/main && go mod tidy
 
-RUN go get github.com/gin-gonic/gin \
-    github.com/go-sql-driver/mysql \
-    github.com/jinzhu/gorm
+RUN go install github.com/cosmtrek/air@latest
+
+CMD ["air", "-c", ".air.toml"]
