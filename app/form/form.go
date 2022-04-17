@@ -35,19 +35,19 @@ func Validate(form Form, ctx *gin.Context) error {
 				}
 			}
 		}
-		sessionMessages(ctx, errorMessages)
-		sessionOld(ctx)
+		setSessionMessages(ctx, errorMessages)
+		setSessionOld(ctx)
 	}
 	return err
 }
 
 // バリデーションメッセージをセッションに保存してリダイレクト
-func sessionMessages(ctx *gin.Context, messages gin.H) {
+func setSessionMessages(ctx *gin.Context, messages gin.H) {
 	sessionModule.Set(ctx, "_error_messages", messages)
 }
 
 // old値をセッションに保存
-func sessionOld(ctx *gin.Context) {
+func setSessionOld(ctx *gin.Context) {
 	olds := gin.H{}
 	for key, _ := range ctx.Request.Form {
 		olds[key] = ctx.PostForm(key)
