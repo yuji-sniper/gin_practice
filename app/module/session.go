@@ -9,26 +9,22 @@ import (
 
 type SessionModule struct{}
 
-// フラッシュメッセージをセッションに保存
-func (SessionModule) SetFlashMessage(ctx *gin.Context, message string) {
+// セッションに保存
+func (SessionModule) Set(ctx *gin.Context, key string, value interface{}) {
 	session := sessions.Default(ctx)
-	session.Set("flash_message", message)
+	session.Set(key, value)
 	if err := session.Save(); err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error(), "セッションのセーブに失敗しました!")
-		return
 	}
 }
 
-// フラッシュメッセージをセッションから取得
-func (SessionModule) GetFlashMessage(ctx *gin.Context) interface{} {
+// セッションから値を取得して削除
+func (SessionModule) Pull(ctx *gin.Context, key string) interface{} {
 	session := sessions.Default(ctx)
-	flashMessage := session.Get("flash_message")
-	session.Delete("flash_message")
+	value := session.Get(key)
+	session.Delete(key)
 	if err := session.Save(); err != nil {
-		ctx.String(http.StatusInternalServerError, err.Error(), "セッションのセーブに失敗しました!")
+		ctx.String(http.StatusInternalServerError, err.Error(), "セッションエラーが発生しました!")
 	}
-	if flashMessage != nil {
-		return flashMessage.(string)
-	}
-	return flashMessage
+	return value
 }

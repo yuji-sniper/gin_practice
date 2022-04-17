@@ -1,9 +1,12 @@
 package controller
 
 import (
+	"app/main/form"
 	"app/main/model"
 	"app/main/module"
 	"app/main/repository"
+	"fmt"
+
 	"net/http"
 	"strconv"
 
@@ -16,7 +19,6 @@ var sessionModule module.SessionModule
 
 func init() {
 	bookRepository = repository.BookRepository{}
-
 	sessionModule = module.SessionModule{}
 }
 
@@ -24,7 +26,7 @@ func init() {
 func BookIndex(ctx *gin.Context) {
 	books := bookRepository.FetchBooks()
 
-	flashMessage := sessionModule.GetFlashMessage(ctx)
+	flashMessage := sessionModule.Pull(ctx, "flash_message")
 
 	ctx.HTML(http.StatusOK, "index.html", gin.H{
 		"books": books,
@@ -34,21 +36,24 @@ func BookIndex(ctx *gin.Context) {
 
 // Book作成画面
 func BookCreate(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "create.html", gin.H{})
+	errorMessages := sessionModule.Pull(ctx, "_error_messages")
+	old := sessionModule.Pull(ctx, "_old")
+	ctx.HTML(http.StatusOK, "create.html", gin.H{
+		"errorMessages": errorMessages,
+		"old": old,
+	})
 } 
 
 // Book作成処理
 func BookStore(ctx *gin.Context) {
-	book := model.Book{}
-	if err := ctx.Bind(&book); err != nil {
-		ctx.String(http.StatusInternalServerError, err.Error())
+	if err := form.Validate(form.BookForm{}, ctx); err != nil {
+		ctx.Redirect(http.StatusFound, "/book/create")
 		return
 	}
-
+	book := model.Book{}
+	ctx.Bind(&book)
 	bookRepository.CreateBook(&book)
-
-	sessionModule.SetFlashMessage(ctx, "作成しました!")
-
+	sessionModule.Set(ctx, "flash_message", "作成しました!")
 	ctx.Redirect(http.StatusFound, "/book")
 }
 
@@ -60,8 +65,12 @@ func BookEdit(ctx *gin.Context) {
 		return
 	}
 	book := bookRepository.FindBook(id)
+	errorMessages := sessionModule.Pull(ctx, "_error_messages")
+	old := sessionModule.Pull(ctx, "_old")
 	ctx.HTML(http.StatusOK, "edit.html", gin.H{
 		"book": book,
+		"errorMessages": errorMessages,
+		"old": old,
 	})
 }
 
@@ -72,15 +81,14 @@ func BookUpdate(ctx *gin.Context) {
 		ctx.String(http.StatusBadRequest, "idが数字ではありません!")
 		return
 	}
-	book := model.Book{}
-	if err := ctx.Bind(&book); err != nil {
-		ctx.String(http.StatusInternalServerError, err.Error())
+	if err := form.Validate(form.BookForm{}, ctx); err != nil {
+		ctx.Redirect(http.StatusFound, fmt.Sprintf("/book/edit/%d", id))
 		return
 	}
+	book := model.Book{}
+	ctx.Bind(&book)
 	bookRepository.UpdateBook(id, &book)
-
-	sessionModule.SetFlashMessage(ctx, "更新しました!")
-
+	sessionModule.Set(ctx, "flash_message", "更新しました!")
 	ctx.Redirect(http.StatusFound, "/book")
 }
 
@@ -93,7 +101,7 @@ func BookDelete(ctx *gin.Context) {
 	}
 	bookRepository.DeleteBook(id)
 
-	sessionModule.SetFlashMessage(ctx, "削除しました!")
+	sessionModule.Set(ctx, "flash_message", "削除しました!")
 
 	ctx.Redirect(http.StatusFound, "/book")
 }
