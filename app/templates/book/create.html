@@ -5,14 +5,27 @@
     <p>
         <div>タイトル:</div>
         <div>
-            <input type="text" name="title">
+            <input type="text" name="title" 
+                {{ if .old }}
+                    value="{{ .old.title }}"
+                {{ end }}>
         </div>
+        {{ if .errorMessages }}
+            {{ .errorMessages.Title }}
+        {{ end }}
     </p>
     <p>
         <div>内容：</div>
         <div>
-            <textarea name="content"></textarea>
+            {{ if .old }}
+                <textarea name="content">{{ .old.content }}</textarea>
+            {{ else }}
+                <textarea name="content"></textarea>
+            {{ end }}
         </div>
+        {{ if .errorMessages }}
+            {{ .errorMessages.Content }}
+        {{ end }}
     </p>
     <p>
         <div>

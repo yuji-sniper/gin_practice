@@ -11,7 +11,6 @@ func main() {
 	// データベース
 	repository.Init()
 	defer repository.Close()
-
 	// ルーティング
 	route.Init()
 }

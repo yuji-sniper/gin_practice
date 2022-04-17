@@ -1,5 +1,9 @@
 <h1>Book一覧</h1>
 
+{{ if .flashMessage }}
+    <p>{{ .flashMessage }}</p>
+{{ end }}
+
 <table border="1">
     <tr>
         <th>タイトル</th>

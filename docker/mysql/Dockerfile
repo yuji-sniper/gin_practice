@@ -1,1 +1,1 @@
-FROM mysql:8.0.16
+FROM mysql:5.7
