@@ -3,9 +3,7 @@ package form
 import (
 	"app/main/module"
 	"encoding/gob"
-	// "net/http"
 
-	// "github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
