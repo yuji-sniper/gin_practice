@@ -1,33 +1,30 @@
 package controller
 
 import (
+	"app/main/domain/model"
+	"app/main/domain/repository"
 	"app/main/form"
-	"app/main/model"
+	"app/main/infra"
 	"app/main/module"
-	"app/main/repository"
 	"fmt"
-
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-var bookRepository repository.BookRepository
-
+var bookRepository repository.BookContract
 var sessionModule module.SessionModule
 
 func init() {
-	bookRepository = repository.BookRepository{}
+	bookRepository = infra.BookRepository{}
 	sessionModule = module.SessionModule{}
 }
 
 // Book一覧
 func BookIndex(ctx *gin.Context) {
 	books := bookRepository.FetchBooks()
-
 	flashMessage := sessionModule.Pull(ctx, "flash_message")
-
 	ctx.HTML(http.StatusOK, "index.html", gin.H{
 		"books": books,
 		"flashMessage": flashMessage,
@@ -42,7 +39,7 @@ func BookCreate(ctx *gin.Context) {
 		"errorMessages": errorMessages,
 		"old": old,
 	})
-} 
+}
 
 // Book作成処理
 func BookStore(ctx *gin.Context) {
@@ -52,8 +49,9 @@ func BookStore(ctx *gin.Context) {
 	}
 	book := model.Book{}
 	ctx.Bind(&book)
+	fmt.Println(book)
 	bookRepository.CreateBook(&book)
-	sessionModule.Set(ctx, "flash_message", "作成しました!")
+	sessionModule.Set(ctx, "flash_message", "作成しました！")
 	ctx.Redirect(http.StatusFound, "/book")
 }
 
@@ -61,7 +59,7 @@ func BookStore(ctx *gin.Context) {
 func BookEdit(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.String(http.StatusBadRequest, "idが数字ではありません!")
+		ctx.String(http.StatusBadRequest, "IDが数字ではありません!")
 		return
 	}
 	book := bookRepository.FindBook(id)
@@ -69,16 +67,16 @@ func BookEdit(ctx *gin.Context) {
 	old := sessionModule.Pull(ctx, "_old")
 	ctx.HTML(http.StatusOK, "edit.html", gin.H{
 		"book": book,
-		"errorMessages": errorMessages,
+		"errormessages": errorMessages,
 		"old": old,
 	})
 }
 
-// Book更新処理
+// Book更新
 func BookUpdate(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.String(http.StatusBadRequest, "idが数字ではありません!")
+		ctx.String(http.StatusBadRequest, "IDが数字ではありません!")
 		return
 	}
 	if err := form.Validate(form.BookForm{}, ctx); err != nil {
@@ -88,7 +86,7 @@ func BookUpdate(ctx *gin.Context) {
 	book := model.Book{}
 	ctx.Bind(&book)
 	bookRepository.UpdateBook(id, &book)
-	sessionModule.Set(ctx, "flash_message", "更新しました!")
+	sessionModule.Set(ctx, "flash_message", "更新しました！")
 	ctx.Redirect(http.StatusFound, "/book")
 }
 
@@ -96,12 +94,10 @@ func BookUpdate(ctx *gin.Context) {
 func BookDelete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.String(http.StatusBadRequest, "idが数字ではありません!")
+		ctx.String(http.StatusBadRequest, "IDが数字ではありません!")
 		return
 	}
 	bookRepository.DeleteBook(id)
-
 	sessionModule.Set(ctx, "flash_message", "削除しました!")
-
 	ctx.Redirect(http.StatusFound, "/book")
 }
