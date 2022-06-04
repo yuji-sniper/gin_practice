@@ -41,7 +41,7 @@ func BookCreate(ctx *gin.Context) {
 	})
 }
 
-// Book作成処理
+// Book作成
 func BookStore(ctx *gin.Context) {
 	if err := form.Validate(form.BookForm{}, ctx); err != nil {
 		ctx.Redirect(http.StatusFound, "/book/create")
