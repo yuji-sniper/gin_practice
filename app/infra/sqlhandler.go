@@ -1,20 +1,18 @@
-package repository
+package infra
 
 import (
-	"app/main/model"
+	"app/main/domain/model"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
-
+	"github.com/jinzhu/gorm"
 )
 
 var db *gorm.DB
 
-// DB接続
 func Init() {
 	DBMS := "mysql"
 	USER := os.Getenv("DB_USER")
@@ -38,7 +36,7 @@ func autoMigrate() {
 	db.AutoMigrate(&model.Book{})
 }
 
-// DB接続解除
+// DB接続終了
 func Close() {
 	db.Close()
 }

@@ -1,11 +1,9 @@
-package route
+package handler
 
 import (
-	"app/main/controller"
+	"app/main/handler/controller"
 	"log"
-	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
@@ -15,13 +13,12 @@ var router *gin.Engine
 
 func Init() {
 	router = gin.Default()
-	setCors()
 	setSession()
 	route()
 	router.Run(":8000")
 }
 
-// Routing
+// ルーティング
 func route() {
 	book := router.Group("/book")
 	{
@@ -35,36 +32,12 @@ func route() {
 	}
 }
 
-// CORS
-func setCors() {
-	router.Use(cors.New(cors.Config{
-		AllowMethods: []string{
-            "POST",
-            "GET",
-            "OPTIONS",
-            "PUT",
-            "DELETE",
-        },
-		AllowHeaders: []string{
-            "Access-Control-Allow-Headers",
-            "Content-Type",
-            "Content-Length",
-            "Accept-Encoding",
-            "X-CSRF-Token",
-            "Authorization",
-        },
-		AllowOrigins: []string{
-            "http://localhost:8000/",
-        },
-		MaxAge: 24 * time.Hour,
-	}))
-}
-
-// Session
+// セッション接続
 func setSession() {
 	store, err := redis.NewStore(10, "tcp", "redis:6379", "", []byte("secret"))
 	if err != nil {
 		log.Fatalln(err.Error(), "セッションの接続に失敗しました")
+		return
 	}
 	router.Use(sessions.Sessions("session", store))
 }

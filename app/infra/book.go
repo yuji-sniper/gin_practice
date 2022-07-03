@@ -1,6 +1,8 @@
-package repository
+package infra
 
-import "app/main/model"
+import (
+	"app/main/domain/model"
+)
 
 type BookRepository struct{}
 
@@ -23,13 +25,13 @@ func (BookRepository) FindBook(id int) model.Book {
 	return book
 }
 
-// booksレコード更新
+// 指定のIDのbooksレコード１件更新
 func (BookRepository) UpdateBook(id int, book *model.Book) {
 	book.Id = id
 	db.Save(&book)
 }
 
-// booksレコード１件削除
+// 指定のIDのbooksを１件削除
 func (BookRepository) DeleteBook(id int) {
 	book := model.Book{Id: id}
 	db.Delete(&book)

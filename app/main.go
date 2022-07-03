@@ -1,16 +1,16 @@
 package main
 
 import (
-	"app/main/repository"
-	"app/main/route"
+	"app/main/handler"
+	"app/main/infra"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	// データベース
-	repository.Init()
-	defer repository.Close()
+	infra.Init()
+	defer infra.Close()
 	// ルーティング
-	route.Init()
+	handler.Init()
 }
